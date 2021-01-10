@@ -1,0 +1,43 @@
+.post {
+    margin: 20px 0;
+    max-width: 500px;
+}
+
+.post__header {
+    border-bottom: 1px solid lightgray;
+}
+
+.comment_form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.comment__input {
+    flex: 1;
+    margin: 0px 5px;
+}
+
+.comment__send {
+    cursor: pointer;
+}
+
+.comments strong {
+    font-size: 14px;
+    margin-right: 7px;
+}
+
+.comments .span {
+    font-size: 14px;
+}
+
+.comment__ind {
+    margin: 5px 0;
+}
+
+.post-image {
+    width: 100%;
+    object-fit: contain;
+}

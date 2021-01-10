@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "instagram-webclone"
+  },
+  "targets": {
+    "instagram-webclone": {
+      "hosting": {
+        "app": [
+          "shamajik"
+        ]
+      }
+    }
+  }
+}

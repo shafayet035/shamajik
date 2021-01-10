@@ -1,0 +1,10 @@
+.upload_form {
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.upload_form_field {
+    width: 100%;
+    margin: 20px 0;
+}

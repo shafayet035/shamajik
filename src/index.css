@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f4f4f4;
+  font-family: sans-serif;
+}
+
+.container {
+  width: min(1024px, 90%);
+  margin: auto;
+}
+
+.w-100 {
+  width: 100%;
+}
