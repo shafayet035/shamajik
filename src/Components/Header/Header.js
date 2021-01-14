@@ -5,7 +5,7 @@ import Upload from '../Upload/Upload'
 import './Header.css'
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { Button } from '@material-ui/core'
+import { Avatar, Button } from '@material-ui/core'
 
 const Header = ({user}) => {
     return (
@@ -18,25 +18,24 @@ const Header = ({user}) => {
                 </div>
                 <nav>
                     <ul>
-                        {
-                            user?
+                        <li>
+                            <Link to="/profile">
+                                <Avatar src={user.photoURL} />
+                            </Link>
+                        </li>
                             <li>
-                                <Upload userName={user?.displayName} />
-                            </li> : '' 
-                        }      
-                        { 
-                        user ?
+                                <Upload />
+                            </li> 
                         <li>
                             <Button
                             startIcon={<ExitToAppIcon />} onClick={() => auth.signOut()}>Logout</Button>
                         </li>
-                        : ''
-                        }
                     </ul> 
                 </nav>
             </div>
         </div>
     )
 }
+
 
 export default Header

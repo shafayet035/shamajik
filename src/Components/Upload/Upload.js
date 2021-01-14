@@ -8,7 +8,11 @@ import firebase from 'firebase'
 import './Upload.css'
 import { db, storage } from '../../Firebase';
 
-const Upload = ({userName}) => {
+import { connect } from 'react-redux'
+
+
+const Upload = (props) => {
+
     const [state, setState] = useState({
       bottom: false,
     });
@@ -16,6 +20,7 @@ const Upload = ({userName}) => {
     const [file, setFile] = useState(null)
     const [progress, setProgress] = useState(0);
   
+
     const toggleDrawer = (anchor, open) => (event) => {
       setState({ ...state, [anchor]: open });
     };
@@ -52,7 +57,15 @@ const Upload = ({userName}) => {
                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                            caption: caption,
                            imageUrl: url,
-                           username: userName
+                           username: props.userName,
+                           photoURL: props.photoURL
+                        })
+                        db.collection('users').doc(props.user?.uid).collection('posts').add({
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            caption: caption,
+                            imageUrl: url,
+                            username: props.userName,
+                            photoURL: props.photoURL
                         })
                     });
                     setCaption('')
@@ -91,4 +104,12 @@ const Upload = ({userName}) => {
     )
 }
 
-export default Upload
+const mapState = state => {
+    return {
+        user: state.user,
+        userName: state.user.displayName,
+        photoURL: state.user.photoURL
+    }
+}
+
+export default connect(mapState) (Upload)

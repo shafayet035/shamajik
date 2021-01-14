@@ -1,40 +1,42 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import './App.css';
 import Header from './Components/Header/Header';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from './Components/Home/Home';
 import Auth from './Components/Auth/Auth'
 import { auth } from './Firebase';
+import { connect } from 'react-redux'
+import Profile from './Components/Profile/Profile';
 
-function App() {
-  const [user, setUser] = useState(null)
+function App(props) {
 
   useEffect(() => {
    const unsubscribe =  auth.onAuthStateChanged((authUser) => {
       if(authUser) {
-        setUser(authUser)
+        props.addUser(authUser)
       } else {
-        setUser(null)
+        props.addUser(null)
       }
     })
     return () => {
      unsubscribe()
     }
-  },[user])
+  },[props])
 
 
   return (
     <div className="App">
       <Router>
-        <Header user={user} />
+        <Route path="/">
+          {props.user && <Header user={props.user}/> }
+        </Route>
         <Switch>
+          {props.user ?  
+            <Route path="/profile">
+              <Profile />
+            </Route> : <Auth />}
           <Route path="/">
-            {
-              user ? 
-                <Home user={user}/>
-              :
-              <Auth />
-            }
+            {props.user ?  <Home /> : <Auth /> }
           </Route>
         </Switch>
       </Router>
@@ -42,4 +44,18 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatch = Dispatch => {
+  return {
+    addUser: (user) => Dispatch({type: 'ADD_USER', user: user}) 
+  }
+}
+
+
+
+export default connect(mapStateToProps, mapDispatch)(App);

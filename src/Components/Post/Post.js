@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import './Post.css'
-import { Avatar, Button, Card, CardContent, CardHeader, CardMedia, Input, makeStyles, Typography } from '@material-ui/core'
+import { Avatar, Button, Card, CardContent, CardHeader, Input, makeStyles, Typography } from '@material-ui/core'
 import SendIcon from '@material-ui/icons/Send';
 import { db } from '../../Firebase';
 import firebase from 'firebase'
+import { connect } from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
     small: {
@@ -13,15 +14,15 @@ const useStyles = makeStyles((theme) => ({
       },
   }));
 
-const Post = ({username, caption, imageUrl, postId, user}) => {
+const Post = (props) => {
     const classes = useStyles();
     const [comments, setComments] = useState([])
     const [comment, setComment] = useState('')
 
     useEffect(() => {
         let unsubscribe;
-        if(postId) {
-          unsubscribe =  db.collection('posts').doc(postId).collection('comments').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+        if(props.postId) {
+          unsubscribe =  db.collection('posts').doc(props.postId).collection('comments').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
                 setComments(snapshot.docs.map(doc => ({
                     id: doc.id,
                     data: doc.data()
@@ -31,14 +32,14 @@ const Post = ({username, caption, imageUrl, postId, user}) => {
         return () => {
             unsubscribe()
         }
-    }, [postId])
+    }, [props.postId])
 
     const addcommentHandler = (e) => {
         e.preventDefault()
         if(comment !== '') {
-            db.collection('posts').doc(postId).collection('comments').add({
+            db.collection('posts').doc(props.postId).collection('comments').add({
                 text: comment,
-                user: user.displayName,
+                user: props.user.displayName,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             setComment('')
@@ -49,30 +50,28 @@ const Post = ({username, caption, imageUrl, postId, user}) => {
 
     return (
         <div className="post_parent">
-            <div className="container">
+            <div>
                 <div className="post">
                     <Card>
                         <CardHeader
                             className="post__header"
                             avatar={
-                            <Avatar aria-label="recipe" >
-                                
-                            </Avatar>
+                            <Avatar src={props.avatar} />
                             }
-                            title={username}
+                            title={props.username}
                             subheader=""
                         /> 
                         <CardContent>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {caption}
+                                {props.caption}
                             </Typography>
                         </CardContent>
                         <img className="post-image"
-                            src={imageUrl}
+                           alt='' src={props.imageUrl}
                         />
                         <div>
                             <form onSubmit={addcommentHandler} className="comment_form" noValidate autoComplete="off">
-                                <Avatar alt={username} className={classes.small} />
+                                <Avatar src={props.user.photoURL} alt={props.username} className={classes.small} />
                                 <Input onChange={(e) => setComment(e.target.value)} placeholder="Add a Comment" 
                                 className="comment__input" value={comment} />
                                 <Button type="submit" >
@@ -100,4 +99,11 @@ const Post = ({username, caption, imageUrl, postId, user}) => {
     )
 }
 
-export default Post
+const mapState = state => {
+    return {
+        user: state.user
+    }
+}
+
+
+export default connect(mapState) (Post)

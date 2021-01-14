@@ -1,28 +1,45 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import './Home.css';
 import { db } from '../../Firebase'
 import Post from '.././Post/Post'
+import { connect } from 'react-redux'
 
-function Home({user}) {
-  const [posts, setPosts] = useState([])
-
+function Home(props) {
   useEffect(() => {
-    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      setPosts(snapshot.docs.map(doc => ({
+    const unsubscribe = db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      props.getPosts(snapshot.docs.map(doc => ({
         id: doc.id,
         post:doc.data()
       })))
     })
+    return () => {
+      unsubscribe()
+    }
   },[])
 
+
+
   return (
-    <div className="App">
-        {
-          posts.map(pst => <Post user={user} postId={pst.id} key={pst.id} username={pst.post.username} caption={pst.post.caption} imageUrl={pst.post.imageUrl} />
-          )
+    <div className="home container">
+        {  props.posts &&
+         props.posts.map(pst => (<Post postId={pst.id} key={pst.id} username={pst.post.username} caption={pst.post.caption} avatar={pst.post.photoURL} imageUrl={pst.post.imageUrl} />)
+         )
         }
     </div>
   );
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    posts: state.posts,
+  }
+}
+
+const mapDispatchToState = dispatch => {
+  return {
+    getPosts: (posts) => dispatch({type: 'GET_POSTS', posts: posts})
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToState) (Home);

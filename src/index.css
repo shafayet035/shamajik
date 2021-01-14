@@ -17,3 +17,7 @@ body {
 .w-100 {
   width: 100%;
 }
+
+.home, .profile {
+  padding: 50px 0;
+}
